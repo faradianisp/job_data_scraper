@@ -1,22 +1,28 @@
-# JobStreet Remote Data Analyst Scraper
+## Data Pipeline & ETL Process
 
-Skrip Python sederhana untuk melakukan web scraping lowongan kerja "Data Analyst - Remote" di JobStreet Indonesia.
+In this phase, I transitioned from simple data collection to building a robust **ETL (Extract, Transform, Load)** pipeline. The goal was to automate the flow of scraped data from a local CSV file into a structured **SQL Server (SSMS)** database.
 
-## Fitur
-* Mengambil data Judul Pekerjaan, Nama Perusahaan, Lokasi, dan Gaji.
-* Membersihkan karakter encoding aneh (seperti simbol Â) agar rapi di Excel.
-* Menyimpan hasil ke dalam format CSV dengan encoding `utf-8-sig`.
+### The Workflow
+`Web Scraping (JobStreet)` ➡️ `Raw CSV` ➡️ `Python Transformation (Regex)` ➡️ `SQL Server Database`
 
-## Prerequisites
-* Python 3.x
-* Library: `requests`, `beautifulsoup4`, `pandas`
+### Key Technical Challenges & Solutions
 
-## Cara Penggunaan
-1. Clone repositori ini.
-2. Install library yang dibutuhkan:
-   ```bash
-   pip install -r requirements.txt
+* **Data Cleaning with Regex (Transform):**
+    The raw salary data was highly inconsistent (e.g., *"Rp 7.000.000 – Rp 8.000.000"*, mixed with different thousand separators and invisible characters). I implemented a **Regular Expression (Regex)** logic in Python to:
+    * Strip currency symbols and non-numeric characters.
+    * Identify and split salary ranges into dedicated `Min_Salary` and `Max_Salary` columns.
+    * Ensure data types are numeric (`FLOAT/DECIMAL`) for future analytical queries.
+
+* **Database Integration (Load):**
+    I automated the database connection and table creation using `SQLAlchemy` and `pyodbc`. By using the `if_exists='replace'` logic, I ensured the database stays synchronized with the latest scraping results with a single click.
+
+* **Infrastructure Troubleshooting:**
+    Encountered and resolved **SSL Security Error 18** during the local SQL Server connection. I managed this by fine-tuning the connection string attributes (`TrustServerCertificate=yes`) and ensuring the correct **ODBC Driver 17** was utilized.
+
+### 🧰 Tech Stack
+* **Language:** Python 3.x
+* **Libraries:** Pandas (Data Manipulation), SQLAlchemy (ORM), pyodbc (Database Driver), Re (Regular Expressions)
+* **Database:** Microsoft SQL Server Management Studio (SSMS)
+
 ---
-
-Disclaimer
-Proyek ini dibuat untuk tujuan pembelajaran. Pastikan untuk mematuhi kebijakan privasi dan etika web scraping dari situs yang bersangkutan.
+*Next Step: SQL Data Analysis & Insights Generation*
